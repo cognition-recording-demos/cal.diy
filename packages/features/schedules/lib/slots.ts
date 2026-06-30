@@ -20,7 +20,20 @@ export type GetSlots = {
   showOptimizedSlots?: boolean | null;
   datesOutOfOfficeTimeZone?: string;
 };
+
 export type TimeFrame = { userIds?: number[]; startTime: number; endTime: number };
+
+type Slot = {
+  time: Dayjs;
+  userIds?: number[];
+  away?: boolean;
+  fromUser?: IFromUser;
+  toUser?: IToUser;
+  reason?: string;
+  emoji?: string;
+  notes?: string | null;
+  showNotePublicly?: boolean;
+};
 
 const minimumOfOne = (input: number) => (input < 1 ? 1 : input);
 
@@ -68,16 +81,14 @@ function getCorrectedSlotStartTime({
   return slotStartTime.startOf("hour").add(Math.ceil(slotStartTime.minute() / interval) * interval, "minute");
 }
 
-function buildSlotsWithDateRanges({
+function generateSlots({
   dateRanges,
   frequency,
   eventLength,
   timeZone,
   minimumBookingNotice,
   offsetStart,
-  datesOutOfOffice,
   showOptimizedSlots,
-  datesOutOfOfficeTimeZone,
 }: {
   dateRanges: DateRange[];
   frequency: number;
@@ -85,9 +96,7 @@ function buildSlotsWithDateRanges({
   timeZone: string;
   minimumBookingNotice: number;
   offsetStart?: number;
-  datesOutOfOffice?: IOutOfOfficeData;
   showOptimizedSlots?: boolean | null;
-  datesOutOfOfficeTimeZone?: string;
 }) {
   // keep the old safeguards in; may be needed.
   frequency = minimumOfOne(frequency);
@@ -97,18 +106,7 @@ function buildSlotsWithDateRanges({
   const orderedDateRanges = dateRanges.sort((a, b) => a.start.valueOf() - b.start.valueOf());
 
   // there can only ever be one slot at a given start time, and based on duration also only a single length.
-  const slots = new Map<
-    string,
-    {
-      time: Dayjs;
-      userIds?: number[];
-      away?: boolean;
-      fromUser?: IFromUser;
-      toUser?: IToUser;
-      reason?: string;
-      emoji?: string;
-    }
-  >();
+  const slots = new Map<string, Dayjs>();
 
   let interval = Number(process.env.NEXT_PUBLIC_AVAILABILITY_SCHEDULE_INTERVAL) || 1;
   const intervalsWithDefinedStartTimes = [60, 30, 20, 15, 10, 5];
@@ -183,50 +181,89 @@ function buildSlotsWithDateRanges({
       }
 
       slotBoundaries.set(slotStartTime.valueOf(), true);
-
-      let dateOutOfOfficeExists = undefined;
-      if (datesOutOfOffice) {
-        const slotDateYYYYMMDD = datesOutOfOfficeTimeZone
-          ? slotStartTime.tz(datesOutOfOfficeTimeZone).format("YYYY-MM-DD")
-          : slotStartTime.utc().format("YYYY-MM-DD");
-        dateOutOfOfficeExists = datesOutOfOffice?.[slotDateYYYYMMDD];
-      }
-
-      let slotData: {
-        time: Dayjs;
-        userIds?: number[];
-        away?: boolean;
-        fromUser?: IFromUser;
-        toUser?: IToUser;
-        reason?: string;
-        emoji?: string;
-        notes?: string | null;
-        showNotePublicly?: boolean;
-      } = {
-        time: slotStartTime,
-      };
-
-      if (dateOutOfOfficeExists) {
-        const { toUser, fromUser, reason, emoji, notes, showNotePublicly } = dateOutOfOfficeExists;
-
-        slotData = {
-          time: slotStartTime,
-          away: true,
-          ...(fromUser && { fromUser }),
-          ...(toUser && { toUser }),
-          ...(reason && { reason }),
-          ...(emoji && { emoji }),
-          ...(notes && showNotePublicly && { notes }),
-          ...(showNotePublicly !== undefined && { showNotePublicly }),
-        };
-      }
-
-      slots.set(slotKey, slotData);
+      slots.set(slotKey, slotStartTime);
       slotStartTime = slotStartTime.add(frequency + (offsetStart ?? 0), "minutes");
     }
   });
 
   return Array.from(slots.values());
+}
+
+function applySlotFilters({
+  slots,
+  datesOutOfOffice,
+  datesOutOfOfficeTimeZone,
+}: {
+  slots: Dayjs[];
+  datesOutOfOffice?: IOutOfOfficeData;
+  datesOutOfOfficeTimeZone?: string;
+}): Slot[] {
+  return slots.map((time) => {
+    if (!datesOutOfOffice) {
+      return { time };
+    }
+
+    let slotDateYYYYMMDD = time.utc().format("YYYY-MM-DD");
+    if (datesOutOfOfficeTimeZone) {
+      slotDateYYYYMMDD = time.tz(datesOutOfOfficeTimeZone).format("YYYY-MM-DD");
+    }
+    const dateOutOfOfficeExists = datesOutOfOffice[slotDateYYYYMMDD];
+
+    if (!dateOutOfOfficeExists) {
+      return { time };
+    }
+
+    const { toUser, fromUser, reason, emoji, notes, showNotePublicly } = dateOutOfOfficeExists;
+
+    return {
+      time,
+      away: true,
+      ...(fromUser && { fromUser }),
+      ...(toUser && { toUser }),
+      ...(reason && { reason }),
+      ...(emoji && { emoji }),
+      ...(notes && showNotePublicly && { notes }),
+      ...(showNotePublicly !== undefined && { showNotePublicly }),
+    };
+  });
+}
+
+function buildSlotsWithDateRanges({
+  dateRanges,
+  frequency,
+  eventLength,
+  timeZone,
+  minimumBookingNotice,
+  offsetStart,
+  datesOutOfOffice,
+  showOptimizedSlots,
+  datesOutOfOfficeTimeZone,
+}: {
+  dateRanges: DateRange[];
+  frequency: number;
+  eventLength: number;
+  timeZone: string;
+  minimumBookingNotice: number;
+  offsetStart?: number;
+  datesOutOfOffice?: IOutOfOfficeData;
+  showOptimizedSlots?: boolean | null;
+  datesOutOfOfficeTimeZone?: string;
+}): Slot[] {
+  const candidateSlots = generateSlots({
+    dateRanges,
+    frequency,
+    eventLength,
+    timeZone,
+    minimumBookingNotice,
+    offsetStart,
+    showOptimizedSlots,
+  });
+
+  return applySlotFilters({
+    slots: candidateSlots,
+    datesOutOfOffice,
+    datesOutOfOfficeTimeZone,
+  });
 }
 
 const getSlots = ({
