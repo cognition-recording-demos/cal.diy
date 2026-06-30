@@ -2,7 +2,7 @@ import process from "node:process";
 import dayjs from "@calcom/dayjs";
 import type { DateRange } from "@calcom/features/schedules/lib/date-ranges";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import getSlots from "./slots";
+import getSlots, { applyDatesOutOfOffice, generateSlotsFromDateRanges } from "./slots";
 
 let dateRangesNextDay: DateRange[];
 
@@ -19,6 +19,55 @@ beforeAll(() => {
       end: dayjs.utc().add(1, "day").endOf("day"),
     },
   ];
+});
+
+describe("Tests the extracted slot helpers", () => {
+  it("generates candidate slots from aligned date ranges", () => {
+    const slots = generateSlotsFromDateRanges({
+      dateRanges: [
+        {
+          start: dayjs.utc("2021-06-21T00:00:00.000Z"),
+          end: dayjs.utc("2021-06-21T02:00:00.000Z"),
+        },
+      ],
+      frequency: 60,
+      eventLength: 60,
+      timeZone: "UTC",
+      minimumBookingNotice: 0,
+      offsetStart: 0,
+      showOptimizedSlots: false,
+    });
+
+    expect(slots.map((slot) => slot.toISOString())).toStrictEqual([
+      "2021-06-21T00:00:00.000Z",
+      "2021-06-21T01:00:00.000Z",
+    ]);
+  });
+
+  it("decorates out of office slots and leaves others untouched", () => {
+    const slot = dayjs.utc("2021-06-21T00:00:00.000Z");
+    const otherSlot = dayjs.utc("2021-06-22T00:00:00.000Z");
+
+    expect(
+      applyDatesOutOfOffice({
+        slots: [slot, otherSlot],
+        datesOutOfOffice: {
+          "2021-06-21": {
+            fromUser: { id: 1, displayName: "Jane" },
+            reason: "OOO",
+          },
+        },
+      })
+    ).toStrictEqual([
+      {
+        time: slot,
+        away: true,
+        fromUser: { id: 1, displayName: "Jane" },
+        reason: "OOO",
+      },
+      { time: otherSlot },
+    ]);
+  });
 });
 
 describe("Tests the slot logic", () => {
