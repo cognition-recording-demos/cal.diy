@@ -45,4 +45,19 @@ export class BookingDetailsService {
       tracking: booking.tracking,
     };
   }
+
+  async getBookingSummaryByEmail(email: string) {
+    const bookings = await this.bookingRepo.findBookingsByUserEmail(email);
+
+    return bookings.map((booking) => ({
+      id: booking.id,
+      uid: booking.uid,
+      title: booking.title,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      status: booking.status,
+      organizer: booking.user,
+      attendees: booking.attendees,
+    }));
+  }
 }

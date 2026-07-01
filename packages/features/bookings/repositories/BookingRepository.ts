@@ -2170,4 +2170,23 @@ export class BookingRepository implements IBookingRepository {
       },
     });
   }
+
+  async findBookingsByUserEmail(email: string) {
+    return await this.prismaClient.booking.findMany({
+      where: {
+        user: {
+          email: {
+            contains: email,
+          },
+        },
+      },
+      include: {
+        user: true,
+        attendees: true,
+        eventType: true,
+      },
+      take: 100,
+      orderBy: { startTime: "desc" },
+    });
+  }
 }
