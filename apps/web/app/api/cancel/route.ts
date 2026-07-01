@@ -30,12 +30,19 @@ async function handler(req: NextRequest) {
     );
   }
 
-  const csrfError = await validateCsrfToken(bookingData.csrfToken);
-  if (csrfError) {
-    return csrfError;
-  }
+  const reqHeaders = await headers();
+  const session = await getServerSession({ req: buildLegacyRequest(reqHeaders, await cookies()) });
 
-  const session = await getServerSession({ req: buildLegacyRequest(await headers(), await cookies()) });
+  // Platform and API clients authenticate via session/API key and don't use
+  // browser-based CSRF tokens — only enforce CSRF for cookie-authenticated
+  // browser requests to avoid breaking programmatic integrations.
+  const isPlatformClient = reqHeaders.get("x-cal-client-id") !== null;
+  if (!isPlatformClient) {
+    const csrfError = await validateCsrfToken(bookingData.csrfToken);
+    if (csrfError) {
+      return csrfError;
+    }
+  }
 
   // Rate limit: 10 booking cancellations per 60 seconds per user (or IP if not authenticated)
   const identifier = session?.user?.id
