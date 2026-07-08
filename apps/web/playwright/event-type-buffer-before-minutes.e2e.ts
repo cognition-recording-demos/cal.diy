@@ -59,8 +59,10 @@ test.describe("Event type bufferBeforeMinutes", () => {
     if (!controlEventType) throw new Error("Control event type not found");
 
     // Existing booking at 12:00-12:30 (Europe/London). A user-level booking blocks
-    // availability across all of the user's event types.
-    const existingBookingStart = bookingDate.tz("Europe/London").hour(12).minute(0).second(0).millisecond(0);
+    // availability across all of the user's event types. Build the instant from the
+    // booking day's calendar date so it lands on the same day the booker navigates to
+    // (constructing via .tz() on a timestamp can roll over into the next day).
+    const existingBookingStart = dayjs.tz(`${bookingDate.format("YYYY-MM-DD")} 12:00`, "Europe/London");
     await bookings.create(user.id, username, controlEventType.id, {
       startTime: existingBookingStart.toDate(),
       endTime: existingBookingStart.add(EVENT_LENGTH, "minutes").toDate(),
