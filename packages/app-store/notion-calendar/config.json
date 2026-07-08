@@ -1,0 +1,20 @@
+{
+  "/*": "Don't modify slug - If required, do it using cli edit command",
+  "name": "Notion Calendar",
+  "slug": "notion-calendar",
+  "type": "notion-calendar_calendar",
+  "logo": "icon.svg",
+  "url": "https://www.notion.com/product/calendar",
+  "variant": "calendar",
+  "categories": ["calendar"],
+  "publisher": "Cal.com, Inc.",
+  "email": "support@cal.com",
+  "description": "Manage your schedule with Notion Calendar.",
+  "isTemplate": false,
+  "__createdUsingCli": true,
+  "externalLink": {
+    "url": "https://www.notion.com/product/calendar",
+    "newTab": true
+  },
+  "__template": "link-as-an-app"
+}

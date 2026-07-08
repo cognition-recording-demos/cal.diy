@@ -23,6 +23,7 @@ export const REDIRECT_APPS = [
   "millis-ai",
   "monobot",
   "n8n",
+  "notion-calendar",
   "pipedream",
   "raycast",
   "retell-ai",
