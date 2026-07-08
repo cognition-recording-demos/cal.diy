@@ -66,6 +66,7 @@ const commons = {
   periodEndDate: null,
   beforeEventBuffer: 0,
   afterEventBuffer: 0,
+  bufferBeforeMinutes: 0,
   periodType: PeriodType.UNLIMITED,
   periodDays: null,
   slotInterval: null,

@@ -100,7 +100,7 @@ const _ensureAvailableUsers = async (
       returnDateOverrides: false,
       dateFrom: startDateTimeUtc.format(),
       dateTo: endDateTimeUtc.format(),
-      beforeEventBuffer: eventType.beforeEventBuffer,
+      beforeEventBuffer: eventType.beforeEventBuffer + (eventType.bufferBeforeMinutes ?? 0),
       afterEventBuffer: eventType.afterEventBuffer,
       bypassBusyCalendarTimes: false,
       mode,

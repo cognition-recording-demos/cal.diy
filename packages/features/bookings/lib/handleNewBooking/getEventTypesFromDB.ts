@@ -92,6 +92,7 @@ const getEventTypesFromDBSelect = {
   beforeEventBuffer: true,
   customReplyToEmail: true,
   afterEventBuffer: true,
+  bufferBeforeMinutes: true,
   parentId: true,
   parent: {
     select: {
