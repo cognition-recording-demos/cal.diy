@@ -36,6 +36,7 @@ export const EventTypeAddonMap = {
   "mock-payment-app": dynamic(() => import("./mock-payment-app/components/EventTypeAppCardInterface")),
   paypal: dynamic(() => import("./paypal/components/EventTypeAppCardInterface")),
   "pipedrive-crm": dynamic(() => import("./pipedrive-crm/components/EventTypeAppCardInterface")),
+  "pirsch-analytics": dynamic(() => import("./pirsch-analytics/components/EventTypeAppCardInterface")),
   plausible: dynamic(() => import("./plausible/components/EventTypeAppCardInterface")),
   posthog: dynamic(() => import("./posthog/components/EventTypeAppCardInterface")),
   qr_code: dynamic(() => import("./qr_code/components/EventTypeAppCardInterface")),

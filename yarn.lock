@@ -2887,6 +2887,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@calcom/pirsch-analytics@workspace:packages/app-store/pirsch-analytics":
+  version: 0.0.0-use.local
+  resolution: "@calcom/pirsch-analytics@workspace:packages/app-store/pirsch-analytics"
+  dependencies:
+    "@calcom/lib": "workspace:*"
+    "@calcom/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@calcom/platform-constants@workspace:*, @calcom/platform-constants@workspace:packages/platform/constants":
   version: 0.0.0-use.local
   resolution: "@calcom/platform-constants@workspace:packages/platform/constants"

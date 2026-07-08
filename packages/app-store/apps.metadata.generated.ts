@@ -72,6 +72,7 @@ import paypal_config_json from "./paypal/config.json";
 import ping_config_json from "./ping/config.json";
 import pipedream_config_json from "./pipedream/config.json";
 import pipedrive_crm_config_json from "./pipedrive-crm/config.json";
+import pirsch_analytics_config_json from "./pirsch-analytics/config.json";
 import plausible_config_json from "./plausible/config.json";
 import posthog_config_json from "./posthog/config.json";
 import qr_code_config_json from "./qr_code/config.json";
@@ -184,6 +185,7 @@ export const appStoreMetadata = {
   ping: ping_config_json,
   pipedream: pipedream_config_json,
   "pipedrive-crm": pipedrive_crm_config_json,
+  "pirsch-analytics": pirsch_analytics_config_json,
   plausible: plausible_config_json,
   posthog: posthog_config_json,
   qr_code: qr_code_config_json,

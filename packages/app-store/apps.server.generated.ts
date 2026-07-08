@@ -53,6 +53,7 @@ export const apiHandlers = {
   paypal: import("./paypal/api"),
   ping: import("./ping/api"),
   "pipedrive-crm": import("./pipedrive-crm/api"),
+  "pirsch-analytics": import("./pirsch-analytics/api"),
   plausible: import("./plausible/api"),
   posthog: import("./posthog/api"),
   qr_code: import("./qr_code/api"),
