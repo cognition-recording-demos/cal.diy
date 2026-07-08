@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <title>Notion Calendar</title>
+  <rect width="48" height="48" rx="10" fill="#0F0F0F"/>
+  <rect x="10" y="12" width="28" height="26" rx="4" fill="#FFFFFF"/>
+  <rect x="10" y="12" width="28" height="7" rx="4" fill="#E3E3E1"/>
+  <rect x="16" y="8" width="3" height="8" rx="1.5" fill="#0F0F0F"/>
+  <rect x="29" y="8" width="3" height="8" rx="1.5" fill="#0F0F0F"/>
+  <path d="M20 24v10l8-10v10" stroke="#0F0F0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
