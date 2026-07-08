@@ -186,7 +186,7 @@ export function AllApps({ apps, searchText, categories, userAdminTeams }: AllApp
           ref={appsContainerRef}>
           {filteredApps.map((app) => (
             <AppCard
-              key={app.name}
+              key={app.slug}
               app={app}
               searchText={searchText}
               credentials={app.credentials}
