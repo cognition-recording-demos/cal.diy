@@ -362,6 +362,7 @@ export type EventTypeUpdateInput = {
   minimumBookingNotice?: number;
   beforeEventBuffer?: number;
   afterEventBuffer?: number;
+  bufferBeforeMinutes?: number;
   seatsPerTimeSlot?: number | null;
   onlyShowFirstAvailableSlot?: boolean;
   showOptimizedSlots?: boolean | null;

@@ -811,7 +811,7 @@ export class AvailableSlotsService {
         dateTo: endTime.format(),
         eventTypeId: eventType.id,
         afterEventBuffer: eventType.afterEventBuffer,
-        beforeEventBuffer: eventType.beforeEventBuffer,
+        beforeEventBuffer: eventType.beforeEventBuffer + eventType.bufferBeforeMinutes,
         duration: input.duration || 0,
         returnDateOverrides: false,
         bypassBusyCalendarTimes,

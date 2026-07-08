@@ -1257,6 +1257,7 @@ export class EventTypeRepository implements IEventTypesRepository {
         slotInterval: true,
         beforeEventBuffer: true,
         afterEventBuffer: true,
+        bufferBeforeMinutes: true,
         bookingLimits: true,
         durationLimits: true,
         assignAllTeamMembers: true,
