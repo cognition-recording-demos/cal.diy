@@ -569,7 +569,10 @@ export class AvailableSlotsService {
 
             const selectedDuration = (duration || eventType.length) ?? 0;
 
-            const { title: durationTitle, source: durationSource } = LimitSources.eventDurationLimit({ limit, unit });
+            const { title: durationTitle, source: durationSource } = LimitSources.eventDurationLimit({
+              limit,
+              unit,
+            });
 
             if (selectedDuration > limit) {
               limitManager.addBusyTime({
@@ -811,7 +814,7 @@ export class AvailableSlotsService {
         dateTo: endTime.format(),
         eventTypeId: eventType.id,
         afterEventBuffer: eventType.afterEventBuffer,
-        beforeEventBuffer: eventType.beforeEventBuffer,
+        beforeEventBuffer: eventType.beforeEventBuffer + (eventType.bufferBeforeMinutes ?? 0),
         duration: input.duration || 0,
         returnDateOverrides: false,
         bypassBusyCalendarTimes,
